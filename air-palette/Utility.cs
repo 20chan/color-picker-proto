@@ -49,17 +49,25 @@ namespace air_palette
             using (var gbmp = Graphics.FromImage(bmp))
             {
                 gbmp.CopyFromScreen(lefttop, new Point(), _size);
+                SetInvert(size / scale / 2, size / scale / 2, bmp, gbmp);
                 g.CompositingQuality = CompositingQuality.HighSpeed;
                 g.InterpolationMode = InterpolationMode.NearestNeighbor;
                 g.PixelOffsetMode = PixelOffsetMode.None;
                 g.SmoothingMode = SmoothingMode.None;
                 g.DrawImage(bmp, 0, 0, size * scale, size * scale);
             }
+
+            void SetInvert(int x, int y, Bitmap from, Graphics to)
+            {
+                var p = from.GetPixel(x, y);
+                var n = Color.FromArgb(p.ToArgb() ^ 0xffffff);
+                to.FillRectangle(new SolidBrush(n), x, y, 1, 1);
+            }
         }
 
-        public static string ToHexString(this Color color)
+        public static void SetColor(this Graphics g, Color color, int width, int height)
         {
-            return ColorTranslator.ToHtml(color);
+            g.FillRectangle(new SolidBrush(color), 0, 0, width, height);
         }
     }
 }
